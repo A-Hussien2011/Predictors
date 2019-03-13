@@ -63,8 +63,10 @@ public class Tournament {
                     stateBoolean = true;
                     if(tableSelector == localTableSelector){
                         localTable[localTablePointer] = stateBoolean;
+                        tableSelector = globalTableSelector;
                     } else{
                         globalTable[globalTablePointer] = stateBoolean;
+                        tableSelector = localTableSelector;
                     }
                     break;
             }
