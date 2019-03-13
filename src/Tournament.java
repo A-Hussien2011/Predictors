@@ -23,29 +23,29 @@ public class Tournament {
         globalTable = new boolean[8];
     }
 
-    public double getTournamentAccuracy(int[] program){
+    public double getTournamentAccuracy(int[] program) {
         double wrongPredictions = 0;
-        for(int i = 0; i < program.length; i++){
-            if(program[i] == Main.normal_instruction) continue;
-            stateBoolean = program[i] == Main.branch_taken_instruction;
-            if(tableSelector == localTableSelector){
-                if(localTable[localTablePointer] != stateBoolean) wrongPredictions ++;
+        for (int i = 0; i < program.length; i++) {
+            //if(program[i] == Main.NORMAL_INSTRUCTION) continue;
+            stateBoolean = program[i] == Main.BRANCH_TAKEN;
+            if (tableSelector == localTableSelector) {
+                if (localTable[localTablePointer] != stateBoolean) wrongPredictions++;
                 updateState(localTable[localTablePointer] == stateBoolean);
                 localTablePointer = (localTablePointer + 1) % 8;
             } else {
-                if(globalTable[globalTablePointer] == stateBoolean) wrongPredictions ++;
+                if (globalTable[globalTablePointer] == stateBoolean) wrongPredictions++;
                 updateState(globalTable[globalTablePointer] == stateBoolean);
                 globalTablePointer = (globalTablePointer + 1) % 8;
             }
         }
         System.out.println("Tournament wrong predictions: " + wrongPredictions);
-        return 1 - wrongPredictions/program.length;
+        return (1 - wrongPredictions / program.length) * 100;
     }
 
     //2-bit prediction
-    public void updateState(boolean prediction){
-        if(prediction){
-            switch (state){
+    public void updateState(boolean prediction) {
+        if (prediction) {
+            switch (state) {
                 case strongTaken:
                     state = strongTaken;
                     stateBoolean = true;
@@ -61,26 +61,26 @@ public class Tournament {
                 case weakNotTaken:
                     state = weakTaken;
                     stateBoolean = true;
-                    if(tableSelector == localTableSelector){
+                    if (tableSelector == localTableSelector) {
                         localTable[localTablePointer] = stateBoolean;
                         tableSelector = globalTableSelector;
-                    } else{
+                    } else {
                         globalTable[globalTablePointer] = stateBoolean;
                         tableSelector = localTableSelector;
                     }
                     break;
             }
-        } else{
-            switch (state){
+        } else {
+            switch (state) {
                 case strongTaken:
                     state = weakTaken;
                     stateBoolean = true;
                     break;
                 case weakTaken:
                     state = weakNotTaken;
-                    if(tableSelector == localTableSelector){
+                    if (tableSelector == localTableSelector) {
                         localTable[localTablePointer] = stateBoolean;
-                    } else{
+                    } else {
                         globalTable[globalTablePointer] = stateBoolean;
                     }
                     stateBoolean = false;
